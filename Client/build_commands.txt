@@ -1,0 +1,52 @@
+
+C:\Users\user1\Documents\NetBeansProjects\testLocation>
+
+keytool -genkey -v -keystore client.keystore -alias client -keyalg RSA -keysize 2048 -validity 10000
+
+
+//keytool -genkey -v -keystore client1.keystore -alias client -keyalg RSA -keysize 2048 -validity 10000
+
+cordova platform add browser
+
+cordova platform add android
+
+cordova build android --release
+
+jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore client.keystore android-release-unsigned.apk client
+
+C:\Users\user1\AppData\Local\Android\sdk\build-tools\25.0.1\zipalign -v 4 android-release-unsigned.apk MyHikes.apk 
+
+//to save to file
+cordova plugin add cordova-plugin-file
+
+// To log to console
+cordova plugin add cordova-plugin-console
+// For google maps
+cordova plugin add cordova-plugin-googlemaps --variable API_KEY_FOR_ANDROID="AIzaSyDD353fOPh-KBUQ-2ekPCg75uxXRn0D9Tk"
+
+>npm config set proxy null
+
+cordova plugin add cordova-plugin-file-transfer
+
+// for logcat file ... debugging android app
+C:\Users\user1\AppData\Local\Android\sdk\platform-tools\adb.....
+adb logcat
+
+
+http://localhost:8161/admin/
+
+====================
+For apache activemq
+====================
+ cd C:\Users\user1\Downloads\apache-activemq-5.14.4\bin
+ .\activemq.bat start
+
+
+=================
+mysql -h aa1m3b40v5bhppf.cswse0ugl1yx.us-west-1.rds.amazonaws.com -P 3306 -u root -p
+
+
+
+ESB
+*******************JMS
+************Apache Camel

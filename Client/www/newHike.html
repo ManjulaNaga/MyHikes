@@ -1,0 +1,70 @@
+<html>
+<head>
+      <title>Start Hike</title>
+        <meta charset="UTF-8">
+        <script type="text/javascript" src="cordova.js"></script>
+        <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDD353fOPh-KBUQ-2ekPCg75uxXRn0D9Tk&sensor=false"></script>
+        <script type="text/javascript" src="js/json2.js"></script>
+        <script type="text/javascript" src="js/constants.js"></script>
+        <script type="text/javascript" src="js/jquery-1.9.1.js"></script>
+        <script type="text/javascript" src="js/jquery.mobile-1.4.5.min.js"></script>
+        <link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ </head>
+<body>
+<center>
+        <br><br>
+        <h3>Enter the name of the hike</h3>
+        <input type="text"  id="hikename" data-role="none"><br><br>
+        <button onclick="hikeNameServ();" class="ui-btn ui-btn-inline" >continue</button>
+        <button class="ui-btn ui-btn-inline" onclick="document.location='viewHikes.html'">back</button>
+
+</center>	
+<script>
+	function hikeNameServ(){
+	console.log("in hike name serv() function...");
+        //var uname = document.getElementById("username").value;
+		var hname = document.getElementById("hikename").value;
+		localStorage.setItem("hikename", hname);
+		var uname = localStorage.getItem("username");
+         $.ajax({
+            type: 'POST',
+			data:{
+			        'username': uname,
+                    'hikename':hname
+                },
+				headers : {"Access-Control-Allow-Origin":"*"},
+				beforeSend: function (request)
+				{
+					 request.setRequestHeader("Access-Control-Allow-Origin", "*");
+				},
+                url: 'http://Custom-env.sayz9p6wvy.us-west-1.elasticbeanstalk.com/HikeNameServlet',
+				//url: 'http://134.154.42.2:8080/myhikes/HikeNameServlet',
+                success: function(response){
+                    document.location = response;
+                    console.log('hike name is successfully added'+ hikename );
+                },
+                error: function(){
+                    //console.log(data);
+                    console.log('There was an error adding your comment');
+                }
+         });
+        return false;
+    }
+</script>
+</body>
+</html>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

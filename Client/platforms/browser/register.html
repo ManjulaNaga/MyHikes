@@ -1,0 +1,64 @@
+<html>
+<head>
+    <title>Registration form </title>
+<center>
+<img src="img/hike.jpg" alt="hikes" style="width:20%;height:40%;">
+<link REL="StyleSheet" TYPE="text/css" HREF="include/style.css">
+<script src="regFormValidation.js"></script>
+</head>
+<body id="bordering">
+<h1> Creating a registration form</h1>
+<table><form  name = "registration" method= "post" action="startRecording.html">
+ <tr>
+  <td><label>First Name: </label></td>
+  <td><input type = "text" name = "firstName"  required><br></td>
+ </tr>
+ <tr>
+  <td><label>Last Name: </label></td>
+  <td><input type = "text" name = "lastName" required><br></td>
+ </tr>
+ <tr>
+ <td><label >Email: <label></td>
+  <td><input type = "email" name = "email" required><br></td> 
+ </tr>
+ <tr>
+ <td><label>Phone No: </label></td>
+  <td><input type = "text" name = "phone" required><br></td>
+ </tr>
+  <tr>
+    <td><label>Gender </label></td>
+    <td>
+    <input type = "radio" name = "female">Female<br>
+    <input type = "radio" name = "male">Male
+ </td>
+ </tr>
+ <tr>
+ <td><label>Address: </label></td>
+  <td><input type = "text" name = "address" size="50%"><br></td>
+ </tr>
+ <tr>
+ <td><label>Country</label></td>
+ <td><select name="country">
+<option selected="" value="Default">(Please select a country)</option>
+<option value="AF">Australia</option>
+<option value="AL">Canada</option>
+<option value="DZ">India</option>
+<option value="AS">Russia</option>
+<option value="AD">USA</option>
+</select></td>
+</tr>
+<tr>
+<td><label for="zip">ZIP Code:</label></td>
+<td><input type="text" name="zip"/></td>
+</tr>
+</table>
+
+<p>By joining MyHikes you are agreeing to our <a href= "#policy.html">
+    Privacy Policy</a> and <a href="#terms.html">Terms of use</a></p>
+<input type = "submit" value = "Submit">
+<input type = "reset" value = "Reset">
+
+</form>
+</body>
+</center>
+</html>

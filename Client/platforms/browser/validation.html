@@ -1,0 +1,42 @@
+<html>
+<body>
+<h2>Please conform the details</h2>
+	<form action="sucess.html" method= "post">
+		<table>
+			<tr>
+				<td>First Name:</td>
+				<td><?php echo $fname; ?></td>
+			</tr>
+			<tr>
+				<td>Last Name:</td>
+				<td><?php echo $lname; ?></td>
+			</tr>
+			<tr>
+				<td>User Name:</td>
+				<td><?php echo $username; ?></td>
+			</tr>
+			<tr>
+				<td>Password:</td>
+				<td><?php echo $password; ?></td>
+			</tr>
+			<tr>
+				<td>Email:</td>
+				<td><?php echo $email; ?></td>
+			</tr>
+			<tr>
+				<td>Phone No:</td>
+				<td><?php echo $phone; ?></td>
+			</tr>
+			<tr>
+				<td>Address:</td>
+				<td><?php echo $address; ?></td>
+			</tr>
+			<tr>
+				<td><input type="hidden" value="<?php echo $user_name; ?>" name = "userName"</td>
+			</tr>
+		</table>
+		<input type="submit" value ="conform" >   <!--onclick = "location.href= 'sucess.php'" >-->
+		<input type="button" value ="Edit" onclick = "location.href= 'register.html'" > 
+		</form>
+	</body>
+</html>

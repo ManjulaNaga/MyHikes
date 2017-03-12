@@ -1,0 +1,125 @@
+<html>
+<head>
+    <title>Registration form </title>
+<center>
+<img src="img/h15.jpg" alt="hikes" style="width:20%;height:20%;">
+<script type="text/javascript" src="cordova.js"></script>
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDD353fOPh-KBUQ-2ekPCg75uxXRn0D9Tk&sensor=false"></script>
+<script type="text/javascript" src="js/json2.js"></script>
+<script type="text/javascript" src="js/constants.js"></script>
+<script type="text/javascript" src="js/jquery-1.9.1.js"></script>
+<script type="text/javascript" src="js/jquery.mobile-1.4.5.min.js"></script>
+<link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css" />
+<link REL="StyleSheet" TYPE="text/css" HREF="css/style.css">
+</head>
+<body id="bordering">
+<h1> Register </h1>
+<table>
+ <tr>
+  <td><label>First Name: </label></td>
+  <td><input type = "text" id = "firstname"  required><br></td>
+ </tr>
+ <tr>
+  <td><label>Last Name: </label></td>
+  <td><input type = "text" id = "lastname" required><br></td>
+ </tr>
+ <tr>
+  <td><label>User Name: </label></td>
+  <td><input type = "text" id = "username"  required><br></td>
+ </tr>
+ <tr>
+  <td><label>Password: </label></td>
+  <td><input type = "text" id = "password"  required><br></td>
+ </tr>
+ <tr>
+ <td><label >Email: <label></td>
+  <td><input type = "email" id = "email" required><br></td> 
+ </tr>
+ <tr>
+ <td><label>Phone No: </label></td>
+  <td><input type = "text" id = "phone" required><br></td>
+ </tr>
+ <td><label>Address: </label></td>
+  <td><input type = "text" id = "address" size="50%"><br></td>
+ </tr>
+ <tr>
+ <td><label>Country</label></td>
+ <td><select id="country">
+<option selected="" value="Default">(Please select a country)</option>
+<option value="AF">Australia</option>
+<option value="AL">Canada</option>
+<option value="DZ">India</option>
+<option value="AS">Russia</option>
+<option value="AD">USA</option>
+</select></td>
+</tr>
+<tr>
+<td><label for="zip">ZIP Code:</label></td>
+<td><input type="text" id="zip"/></td>
+</tr>
+</table>
+
+<p>By joining MyHikes you are agreeing to our <a href= "#policy.html">
+    Privacy Policy</a> and <a href="#terms.html">Terms of use</a></p>
+<button  id = "register" onclick="saveRegistration();">Register </button><br>
+<input type="button" id=" reset" onclick="myFunction()" value="Reset">
+
+<script>
+	function myFunction() {
+		document.getElementById("reset").reset();
+	}
+    function saveRegistration(){
+	alert("in save registration function...");
+        var fname = document.getElementById("firstname").value;
+        var lname = document.getElementById("lastname").value;
+        var uname = document.getElementById("username").value;
+		var pwd = document.getElementById("password").value;
+        var email = document.getElementById("email").value;
+        var phone = document.getElementById("phone").value;
+        var address = document.getElementById("address").value;
+        var country = document.getElementById("country").value;
+        var zip = document.getElementById("zip").value;
+		localStorage.setItem("username", uname);
+        $.ajax({
+			type:'POST',
+            data:{
+                    'firstname':fname,
+                    'lastname':lname,
+                    'username':uname,
+                    'password':pwd,
+                    'email':email,
+                    'phone':phone,
+                    'address':address,
+                    'country':country,
+                    'zipCode':zip
+                },
+			headers : {"Access-Control-Allow-Origin":"*"},
+			beforeSend: function (request)
+                    {
+						request.setRequestHeader("Access-Control-Allow-Origin", "*");
+                    },
+                //url: 'http://134.154.42.2:8080/myhikes/RegistrationServlet',
+                url: PATH+'/RegistrationServlet',
+                success: function(response){
+                    document.location = response;
+					if(respone="register.html"){
+						alert('your registrtaion was sucesfull');
+					}
+					else{
+						alert('You registration was not successful,please try with new user name');
+					}
+                },
+                error: function(){
+                    console.log(data);
+                    console.log('There was an error adding your registraation');
+                   // alert('There was an error adding your registraation');
+                },
+              //  processData: false
+         });
+        return false;
+    }
+	</script>
+</body>
+</center>
+</html>
+

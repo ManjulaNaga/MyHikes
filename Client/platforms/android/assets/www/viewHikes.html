@@ -1,0 +1,65 @@
+<html>
+    <head>
+	
+<!--
+@manju 3/7/2017
+-->
+		<script type="text/javascript" src="cordova.js"></script>
+        <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDD353fOPh-KBUQ-2ekPCg75uxXRn0D9Tk&sensor=false"></script>
+        <script type="text/javascript" src="js/json2.js"></script>
+        <script type="text/javascript" src="js/constants.js"></script>
+        <script type="text/javascript" src="js/jquery-1.9.1.js"></script>
+        <script type="text/javascript" src="js/jquery.mobile-1.4.5.min.js"></script>
+        <link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css" />
+        <link REL="StyleSheet" TYPE="text/css" HREF="css/style.css">
+		<meta charset="UTF-8">
+		<title>welcome</title>
+
+<script>
+		
+        var uname = localStorage.getItem("username");
+    	//function viewhikes(){
+		console.log("in view hikes() function...");
+
+         $.ajax({
+                data:{
+                    'username': uname
+                },
+          	headers : {"Access-Control-Allow-Origin":"*"},
+		beforeSend: function (request)
+		{
+                    request.setRequestHeader("Access-Control-Allow-Origin", "*");
+		},
+		
+                url: PATH+'/ViewHikesServlet',
+				//url: 'http://154.134:8080/myhikes/ViewHikesServlet',
+                success: function(response){
+                    // document.write = response;
+					var hikes = JSON.parse(response);
+					var tableData = '<table><tr><td>Name</td><td>Date</td><td>TIme</td></tr>';
+					for (var i = 0; i < hikes.length; ++i) {
+					console.log('hike i:'+hikes[i]);
+							 tableData += '<tr><td><button id = hike[i] onclick ="hike_details(\''+hikes[i].name+'\')">'+hikes[i].name+'</button></td><td>'+hikes[i].date+'</td><td>'+hikes[i].time+'</td></tr>';
+
+					}
+					tableData+= '</table><button><a href ="welcome.html">back</a></button>';
+					document.body.innerHTML = tableData;
+					 console.log(response);
+                    console.log('All hikes are sucessfully loaded');
+                },
+                error: function(){
+                    console.log('There was an error while trying to view all hikes');
+                }
+         });
+    function hike_details(hname)
+        {
+			localStorage.setItem("hikename", hname);
+			window.location.replace("detailedView.html");
+		}
+
+    </script>
+	</head>
+	<body>
+        <button class="ui-btn ui-btn-inline" onclick="document.location='welcome.html'">back</button>
+	</body>
+</html>

@@ -1,0 +1,127 @@
+<html>
+<head>
+<!--
+@manju 3/4/2017
+-->
+		<script type="text/javascript" src="cordova.js"></script>
+        <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDD353fOPh-KBUQ-2ekPCg75uxXRn0D9Tk&sensor=false"></script>
+        <script type="text/javascript" src="js/json2.js"></script>
+        <script type="text/javascript" src="js/constants.js"></script>
+        <script type="text/javascript" src="js/jquery-1.9.1.js"></script>
+        <script type="text/javascript" src="js/jquery.mobile-1.4.5.min.js"></script>
+        <link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css" />
+        <link REL="StyleSheet" TYPE="text/css" HREF="css/style.css">
+		<meta charset="UTF-8">
+		<title>View hike details</title>
+        <script>
+        var uname = localStorage.getItem("username");
+		var hname = localStorage.getItem("hikename");
+		</script>
+		<body>
+			<div  id="map-page" data-role="page" data-url="map-page" style="width:100%;height:400px">
+				<br><br><br>
+				<div role="main" class="ui-content" id="map-canvas" style="width:100%;height:400px">
+					<!-- map loads here... -->
+				</div>
+			</div>
+	        <button class="ui-btn ui-btn-inline" onclick="document.location='viewHikes.html'">back</button>
+
+		<script>
+	var map;
+	$( document ).ready(function() {
+				var defaultLatLng = new google.maps.LatLng(37.6577, -122.0564);  // Default to CSU EB when no geolocation support
+				if ( navigator.geolocation ) {
+					function success(pos) {
+						// Location found, show map with these coordinates
+						drawMap(new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude));
+					}
+					function fail(error) {
+						drawMap(defaultLatLng);  // Failed to find location, show default map
+					}
+					// Find the users current position.  Cache the location for 5 minutes, timeout after 6 seconds
+					navigator.geolocation.getCurrentPosition(success, fail, {maximumAge: 500000, enableHighAccuracy:true, timeout: 6000});
+				} else {
+					drawMap(defaultLatLng);  // No geolocation support, show default map
+				}
+        return false;
+		console.log( "ready!" );
+	});
+	
+	//-----google maps scripts
+	/*
+	 * Google Maps documentation: http://code.google.com/apis/maps/documentation/javascript/basics.html
+	 * Geolocation documentation: http://dev.w3.org/geo/api/spec-source.html
+	 */
+	function drawMap(latlng) {
+	console.log('drwMap');
+	var myOptions = {
+		zoom: 18,
+		center: latlng,
+		mapTypeId: google.maps.MapTypeId.ROADMAP
+	};
+	map = new google.maps.Map(document.getElementById("map-canvas"), myOptions);
+	// Add an overlay to the map of current lat/lng
+	google.maps.event.addListenerOnce(map, 'tilesloaded', function(){loadHikeDetails()});
+
+	}
+	
+	function loadHikeDetails() {
+
+			$.ajax({
+		        type:'POST',
+				
+                data:{
+                    'username': uname,
+					'hikename':hname
+				
+                },
+				headers : {"Access-Control-Allow-Origin":"*"},
+				beforeSend: function (request)
+				{
+                    request.setRequestHeader("Access-Control-Allow-Origin", "*");
+				},
+				//url: 'http://134.154.42.2:8080/myhikes/ViewDetailsServlet',
+				url: PATH+'/ViewDetailsServlet',
+                success: function(response){
+					var hikes = JSON.parse(response);
+					var hikePath = [];
+					var bounds = new google.maps.LatLngBounds();
+					for (var i = 0; i < hikes.length; ++i) {
+						console.log('hike i:'+hikes[i]);
+						var pathPart = new google.maps.LatLng(hikes[i].latitude, hikes[i].longitude);
+						hikePath.push(pathPart);
+						bounds.extend(pathPart);
+					}
+				
+					drawHikePath(hikePath, bounds);
+					console.log(response);
+                    console.log('All hikes are sucessfully loaded');
+                },
+                error: function(){	
+                    console.log('There was an error while trying to view all hikes');
+                }
+			});
+	}
+	
+	function drawHikePath(hikePath, bounds) {
+		console.log('drawHikePath');
+		
+		var p = new google.maps.Polyline({
+			path: hikePath,
+			'strokeColor' : '#AA00FF',
+			'strokeWidth': 6,
+			'fillColor' : '#880000'
+
+		});
+		p.setMap(map);
+		map.setCenter(bounds.getCenter());
+		map.fitBounds(bounds);
+		/* console.log('hike path length:' + hikePath.length);
+		if(hikePath.length > 0){
+			console.log('Set map Center');
+			map.setCenter(hikePath[0]);
+		}*/
+	}
+		</script>
+		</body>
+</html>

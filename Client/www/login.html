@@ -1,0 +1,71 @@
+<html>
+<head>
+		<script type="text/javascript" src="cordova.js"></script>
+        <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDD353fOPh-KBUQ-2ekPCg75uxXRn0D9Tk&sensor=false"></script>
+        <script type="text/javascript" src="js/json2.js"></script>
+        <script type="text/javascript" src="js/constants.js"></script>
+        <script type="text/javascript" src="js/jquery-1.9.1.js"></script>
+        <script type="text/javascript" src="js/jquery.mobile-1.4.5.min.js"></script>
+        <link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css" />
+		<link REL="StyleSheet" TYPE="text/css" HREF="css/style.css">
+		<meta charset="UTF-8">
+<center>
+	<div id = "rollover">
+	<div id ="image_rollover">
+	<img  src="img/login1.jpg" alt="Books" style="width:160px; height:248px"  id ="img/login2.jpg">
+</div>
+</center>
+<title> Loginform</title>
+</head>
+<body id="bordering">
+<div id ="details"><center>
+	<h1> User login </h1>
+        <table>
+		<tr>
+			<td><label>User Name: </label></td> 
+			<td><input  type = "text" id = "username"  required><br></td>
+		</tr>
+		<tr>
+			<td><label>Password: </label></td>
+			<td><input type = "password" id = "password" required><td>
+		</tr>
+		<tr>
+			<td></td>
+			<td><button  id = "Login" onclick="verifyLogin();">Login </button></td>
+                </tr>
+	</table >
+	</center>
+	<script>
+	function verifyLogin(){
+	console.log("in verify login function...");
+        var uname = document.getElementById("username").value;
+		var pwd = document.getElementById("password").value;
+		localStorage.setItem("username", uname);
+         $.ajax({
+            type: 'POST',
+			data:{
+                    'username':uname,
+                    'password':pwd
+                },
+				headers : {"Access-Control-Allow-Origin":"*"},
+				beforeSend: function (request)
+				{
+					 request.setRequestHeader("Access-Control-Allow-Origin", "*");
+				},
+                //url: 'http://134.154.42.2:8080/myhikes/LoginServlet',
+                url: PATH+'/LoginServlet',
+                success: function(response){
+                    document.location = response;
+                    console.log('user successfully logged in');
+                },
+                error: function(){
+                    //console.log(data);
+                    console.log('There was an error while logging in.');
+                }
+         });
+        return false;
+    }
+	</script>
+</div>
+</body>
+</html>

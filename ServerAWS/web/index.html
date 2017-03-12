@@ -1,0 +1,54 @@
+<html>
+    <head>
+        <title>MyHikes</title>
+		<script type="text/javascript" src="cordova.js"></script>
+        <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDD353fOPh-KBUQ-2ekPCg75uxXRn0D9Tk&sensor=false"></script>
+        <script type="text/javascript" src="js/json2.js"></script>
+        <script type="text/javascript" src="js/jquery-1.9.1.js"></script>
+        <link REL="StyleSheet" TYPE="text/css" HREF="css/style.css">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <div id="bordering"><center>
+        <h1 style="color:red;">My Hikes</h1>
+        <div  style="clear: both;" class="slideshow">
+	<img class = "mySlides" src="img/h1.jpg" alt="wallpapers" style="width:100%; height:60%;">
+	<img  class = "mySlides" src="img/h3.jpg" alt="wallpapers" style="width:100%; height:60%;">
+	<img  class = "mySlides" src="img/h4.jpg" alt="wallpapers" style="width:100%; height:60%;">
+	<img  class = "mySlides" src="img/h5.jpg" alt="wallpapers" style="width:100%; height:60%">
+	<img class = "mySlides" src="img/h6.jpg" alt="wallpapers" style="width:100%; height:60%">
+	<img class = "mySlides" src="img/h7.jpg" alt="wallpapers" style="width:100%; height:60%">
+	<img  class = "mySlides" src="img/h8.jpg" alt="wallpapers" style="width:100%; height:60%">
+	<img class = "mySlides" src="img/h9.jpg" alt="wallpapers" style="width:100%; height:60%">
+	<img  class = "mySlides" src="img/h10.jpg" alt="wallpapers" style="width:100%; height:60%">
+	<img  class = "mySlides" src="img/h11.jpg" alt="wallpapers" style="width:100%; height:60%">
+	<img  class = "mySlides" src="img/h12.jpg" alt="wallpapers" style="width:100%; height:60%">
+	<img class = "mySlides" src="img/h13.jpg" alt="wallpapers" style="width:100%; height:60%">
+	<img class = "mySlides" src="img/h14.jpg" alt="wallpapers" style="width:100%; height:60%">
+        </div>
+    </head>
+   <body>
+        <h1>
+        <button onclick="location.href='login.html';">Existing user</button>
+        <button onclick="location.href='register.html';">Join now</button>
+        </h1>
+    </div>
+
+        <script>
+	var myIndex = 0;
+	carousel();
+        function carousel() {
+            var i;
+            var x = document.getElementsByClassName("mySlides");
+            for (i = 0; i < x.length; i++) {
+                x[i].style.display = "none";
+            }
+            myIndex++;
+            if (myIndex > x.length) {myIndex = 1} 		
+            x[myIndex-1].style.display = "block";
+            setTimeout(carousel,2500);
+        }
+        </script>
+    </body>
+</html>
+
+

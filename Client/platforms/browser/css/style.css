@@ -1,0 +1,55 @@
+
+header {
+    padding-bottom: .75em;
+    border-bottom: 3px solid black;
+    margin-bottom: 0; 
+    color: red
+}
+input{
+	width:150px;
+	padding:6px,10px;
+	margin:3px;
+	box-sizing: border-box;
+}
+h1{
+font-family:Arail,Helvetica;
+font-size:200%;
+color : red;
+ margin-bottom: 0;
+}
+
+h2{
+color:green;
+}
+
+footer{
+color: brown
+}
+
+#copyright{
+	font-size:80%;
+}
+.blue{
+	color:blue;
+}
+.center{
+	text-align:center; 
+}
+.right{
+	text-align:right;
+}
+
+p{
+    color: purple;
+    font-size : 100%;
+    margin-left: 2em;
+    margin-right: 2em; 
+    background-color : FFFFCC;
+}
+#bordering {
+    border: 10px solid transparent;
+    padding: 55px;
+    -webkit-border-image: url(border.png) 30 round; /* Safari 3.1-5 */
+    -o-border-image: url(border.png) 30 round; /* Opera 11-12.1 */
+    border-image: url(border.png) 30 round;
+}

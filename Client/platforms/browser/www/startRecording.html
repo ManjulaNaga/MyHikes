@@ -1,0 +1,283 @@
+<html>
+<head>
+      <title>Start Hike</title>
+        <meta charset="UTF-8">
+        <script type="text/javascript" src="cordova.js"></script>
+        <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDD353fOPh-KBUQ-2ekPCg75uxXRn0D9Tk&sensor=false"></script>
+        <script type="text/javascript" src="js/json2.js"></script>
+        <script type="text/javascript" src="js/constants.js"></script>
+        <script type="text/javascript" src="js/jquery-1.9.1.js"></script>
+		<script type="text/javascript" src="js/jquery.mobile-1.4.5.min.js"></script>
+        <link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css" />
+        <link rel="stylesheet" href="css/style.css" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		
+		<script>
+		var maps;
+		var bounds;
+		var polyline;
+        var watch_id = null;    // ID of the geolocation
+		var filename = 'SampleData_'+Date.now()+'.txt';
+		var hikeFileEntry;
+		document.addEventListener("deviceready", onDeviceReady, false);
+		function onDeviceReady() {
+			var networkState = navigator.connection.type;
+			var states = {};
+			states[Connection.UNKNOWN]  = 'Unknown connection';
+			states[Connection.ETHERNET] = 'Ethernet connection';
+			states[Connection.WIFI]     = 'WiFi connection';
+			states[Connection.CELL_2G]  = 'Cell 2G connection';
+			states[Connection.CELL_3G]  = 'Cell 3G connection';
+			states[Connection.CELL_4G]  = 'Cell 4G connection';
+			states[Connection.CELL]     = 'Cell generic connection';
+			states[Connection.NONE]     = 'No network connection';
+
+			console.log('Connection type: ' + states[networkState]);
+			var hikename=  document.getElementById("hikename");
+			var username= localStorage.getItem("username");
+
+			initializeMap();
+
+			var type = LocalFileSystem.PERSISTENT;
+			var size = 0;
+			window.requestFileSystem(type, size, successCallback, errorCallback)
+			function successCallback(fs) {
+			console.log("file system open" + fs.name);
+				var isAppend = true;
+				fs.root.getFile(filename , {create: true}, function(fileEntry) {
+				console.log("file name is "+filename);
+				hikeFileEntry = fileEntry;
+					fileEntry.createWriter(function(fileWriter) {
+						fileWriter.onwriteend = function() {
+						console.log('Write completed.');
+						};
+						fileWriter.onerror = function(e) {
+							console.log('Write failed: ' + e.toString());
+						};
+						if (isAppend) {
+							try {
+								fileWriter.seek(fileWriter.length);
+							}
+							catch (e) {
+								console.log("file doesn't exist!");
+							}
+						}
+					}, errorCallback);
+			}, errorCallback);
+			}
+		}
+	function errorCallback(error) {
+		console.log("ERROR: " + error.code)
+	}
+
+
+	//start recording and write to a file SamplpeData.txt			
+	var str;
+	var latitude;
+	var longitude;
+	function startRecording(){
+		watch_id = navigator.geolocation.watchPosition(
+		 // Success
+			   function(position){ 
+				console.log('Recording started..................................');
+				console.log('\n hike name:'       +localStorage.getItem("hikename")	 +'\n' +'username: '			+localStorage.getItem("username")    +'\n' );
+				latitude = position.coords.latitude;
+				longitude = position.coords.longitude;
+				str = localStorage.getItem("hikename")+","+localStorage.getItem("username")+","+position.coords.latitude+","+ position.coords.longitude +","+position.timestamp +"\n";
+				console.log(str);
+				writeToHikeFile(str);
+				addCurrentPositionToMap(new google.maps.LatLng(latitude, longitude));
+				// initializeMap(position.coords.latitude,position.coords.longitude);
+				},
+		 // Error
+				function(error){ console.log(error);   },
+		 // options
+				{ maximumAge: 3600000, timeout: 300000000, enableHighAccuracy: true });
+	}	
+  
+	function writeToHikeFile(str) {
+		if(!hikeFileEntry) return;
+		hikeFileEntry.createWriter(function(fileWriter) {
+			fileWriter.seek(fileWriter.length);
+			var blob = new Blob([str], {type:'text/plain'});
+			fileWriter.write(blob);
+			console.log("write record to file - ok");
+		}, errorCallback);
+	}
+	
+	function initializeMap(){
+		var defaultLatLng = new google.maps.LatLng(37.6577, -122.0564);  // Default to CSU EB when no geolocation support
+		if ( navigator.geolocation ) {
+			function success(pos) {
+				// Location found, show map with these coordinates
+				drawMap(new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude));
+			}
+			function fail(error) {
+				drawMap(defaultLatLng);  // Failed to find location, show default map
+			}
+			// Find the users current position.  Cache the location for 5 minutes, timeout after 6 seconds
+			navigator.geolocation.getCurrentPosition(success, fail, {maximumAge: 500000, enableHighAccuracy:true, timeout: 6000});
+		} else {
+			drawMap(defaultLatLng);  // No geolocation support, show default map
+		}
+	}
+	
+	function drawMap(latlng) {
+		var myOptions = {
+			zoom: 18,
+			center: latlng,
+			mapTypeId: google.maps.MapTypeId.ROADMAP
+		};
+		map = new google.maps.Map(document.getElementById("map-canvas"), myOptions);
+		polyline = new google.maps.Polyline({
+			// path: new Array(position),
+			'strokeColor' : '#AA00FF',
+			'strokeWidth': 6,
+			'fillColor' : '#880000'
+		});
+		polyline.setMap(map);
+		bounds = new google.maps.LatLngBounds();
+		console.log('initialized map....');
+
+		google.maps.event.addListenerOnce(map, 'tilesloaded', function() {addCurrentPositionToMap(latlng)});
+	}
+
+	function addCurrentPositionToMap(position) {
+		console.log('in loadCurrentPosition....'+ position);
+		var path = polyline.getPath();
+		path.push(position);
+		bounds.extend(position);
+
+		map.setCenter(bounds.getCenter());
+		map.fitBounds(bounds);
+	}
+
+//stop recording and save it in file
+	function stopRecording()
+	{
+		var type = LocalFileSystem.PERSISTENT;
+		var size = 0;
+		console.log("in stop recording().......................");
+		//clearflag ="false";
+		clearWatch(watch_id);
+		console.log("watch cleared uploaading file.........................");
+
+		window.requestFileSystem(type, size, successCallback, errorCallback)
+			function successCallback(fs) {
+				fs.root.getFile(filename, {}, function(fileEntry) {
+					uploadToFile(fileEntry);
+					//uploadFileToDB(fileEntry);
+					console.log("file uploaded");
+				}, errorCallback);
+			}
+			function errorCallback(error) {
+				console.log("ERROR: " + error.code)
+			}
+			function onError(error) {
+				console.log('code: '    + error.code    + '\n' +
+				'message: ' + error.message + '\n');
+			}
+			function clearWatch(watchID) {
+				console.log("in clear watch().......................");
+				if (watchID != null) {
+					navigator.geolocation.clearWatch(watchID);
+					watchID = null;
+				}
+			}
+	}
+//-------------on upload data to file()
+	function uploadToFile(fileEntry)
+	 {
+		
+		console.log(" in upload to file() ...............");
+		// !! Assumes variable fileURL contains a valid URL to a text file on the device,
+		var fileURL = fileEntry.toURL();
+		var uri = encodeURI(PATH+'/HikeServlet');
+
+		var success = function (r) {
+			console.log("Successful upload...");
+			console.log("Code = " + r.responseCode);
+		}
+
+		var fail = function (error) {
+			console.log("An error has occurred: Code = " + error.code);
+		}
+
+		var options = new FileUploadOptions();
+		username= localStorage.getItem("username");
+		hikename = localStorage.getItem("hikename");
+		options.fileKey = "file";
+		options.fileName = fileURL.substr(fileURL.lastIndexOf('/') + 1);
+		options.mimeType = "text/plain";
+		options.params = {
+			  "username" : username,
+			  "hikename":hikename
+					};
+		var ft = new FileTransfer();
+			ft.upload(fileURL, uri, success, fail, options);
+	}
+//upload file data to myhikes DB
+	function uploadFileToDB(fileEntry)
+	{
+		console.log(" in upload file to DB() ...............");
+		var fileURL = fileEntry.toURL();
+		var uri = encodeURI(PATH+ '/HikeServlet');
+		username= localStorage.getItem("username");
+		hikename = localStorage.getItem("hikename");
+		
+		var success = function (r) {
+			console.log("Successful upload...");
+			console.log("Code = " + r.responseCode);
+		}
+
+		var fail = function (error) {
+			console.log("An error has occurred: Code = " + error.code);
+		}
+
+		var options = new FileUploadOptions();
+	  
+		options.fileKey = "file";
+		options.fileName = fileURL.substr(fileURL.lastIndexOf('/') + 1);
+		options.mimeType = "text/plain";
+		options.params = {
+			  "username" : username,
+			  "hikename":hikename
+					};
+		var ft = new FileTransfer();
+			ft.upload(fileURL, uri, success, fail, options);
+	}
+
+</script>
+</head>
+<body>
+		<div data-role="page" id="map-page"  data-url="map-page" style="width:100%;height:400px">
+			<br>
+			<br> <br>
+			<div role="main" class="ui-content" id="map-canvas" style="width:100%;height:400px">
+				<!-- map loads here... -->
+			</div>
+		</div>
+        <button id = "startRecording" class="ui-btn ui-btn-inline">START </button> 
+        <button id ="stopRecording" class="ui-btn ui-btn-inline">STOP </button>
+        <button><a href="newHike.html" class="ui-btn ui-btn-inline">BACK</a></button><br><br>
+		<script>
+
+			document.getElementById("startRecording").addEventListener("click",startRecording );
+            document.getElementById("stopRecording").addEventListener("click",stopRecording );
+	
+		</script>	
+    </body>
+</html>	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

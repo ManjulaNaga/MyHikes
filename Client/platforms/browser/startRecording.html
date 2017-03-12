@@ -1,0 +1,71 @@
+<html>
+<head>
+      <title>Start Hike</title>
+        <meta charset="UTF-8">
+        <script type="text/javascript" src="js/cordova.js"></script>
+        <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDD353fOPh-KBUQ-2ekPCg75uxXRn0D9Tk&sensor=false"></script>
+        <script type="text/javascript" src="js/json2.js"></script>
+        <script type="text/javascript" src="js/jquery-3.1.0.min.js"></script>
+        <script type="text/javascript" src="js/FileOperation.js"></script>
+        <!--<script type="text/javascript" src="include/js/jquery.mobile-1.4.5.min.js"></script>
+        <script type="text/javascript" src="include/js/tracker.js"></script>-->
+        <link rel="stylesheet" href="jquery.mobile-1.4.5.min.css" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        document.addEventListener('deviceready', onDeviceReady, false);
+        document.addEventListener("deviceready", function(){
+            if(navigator.network.connection.type == Connection.NONE){
+                $("#home_network_button").text('No Internet Access')
+                     .attr("data-icon", "delete")
+                    .button('refresh');
+            } 
+      window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fs)
+    {
+        console.log('file system open: ' + fs.name);
+        fs.root.getFile("SampleData.txt", { create: true, exclusive: false }, function (fileEntry) {
+            console.log("fileEntry is file?" + fileEntry.isFile.toString());
+                 // fileEntry.name === 'SampleData.txt';
+                 // fileEntry.fullPath === '/SampleData.txt';
+            // writeToFile(fileEntry, null);
+            console.log("file fullPath" + fileEntry.fullPath);
+        }, onErrorCreateFile);
+    }, onErrorLoadFs);
+        });
+            var watch_id = null;    // ID of the geolocation
+			
+        function startRecording(){
+            // Start tracking the User
+            createFile(cordova.file.dataDirectory,"SampleData.txt", true);
+            watch_id = navigator.geolocation.watchPosition(
+             // Success
+               function(position){  
+                    console.log('Recording started.....');
+                    console.log("latitude = "+ position.coords.latitude);
+                    console.log("longitude = " +position.coords.longitude);
+                    console.log("altitude = " +position.coords.altitude);
+                    console.log("timestamp = "+position.coords.timestamp);
+               },
+             // Error
+               function(error){ console.log(error);   },
+             // options
+                { maximumAge: 3600000, timeout: 30000, enableHighAccuracy: true });
+        }
+        
+    </script>
+</head>
+<body>
+    <center>
+        <br><br>
+        <button id = "startRecording">START RECORDING</button>
+        <button id = "pauseRecording">PAUSE RECORDING</button>
+        <button id = "resumeRecording">RESUME RECORDING</button>
+        <button id = "stopRecording">STOP RECORDING</button></center>
+        <script>
+            //document.getElementById("startRecording").addEventListener("click",createFile );
+            document.getElementById("startRecording").addEventListener("click",startRecording );
+            document.getElementById("pauseRecording").addEventListener("click",pauseRecording );
+            document.getElementById("resumeRecording").addEventListener("click",resumeRecording );
+            document.getElementById("stopRecording").addEventListener("click",stopRecording );
+
+        </script>
+    </body>
